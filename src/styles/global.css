@@ -1,0 +1,16 @@
+@import "../styles/root.css";
+/* @import "../styles/small.css" screen and (max-width: 360px);
+@import "../styles/medium.css" screen and (max-width: 768px);
+@import "../styles/large.css" screen and (max-width: 1024px); */
+
+#app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    /* color: #2c3e50; */
+  }
+  
+
+    
+  
