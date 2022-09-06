@@ -11,7 +11,14 @@ async function getData(fireBaseDb = undefined, dbCollection = undefined){
     }
     else{
         const response = await getDocs(collection(fireBaseDb, dbCollection));
-        return response;
+  
+        const data = []
+
+        for(let index in response.docs){
+            data[index] = response.docs[index].data();
+        }
+  
+        return data;
     }
 // end getData
 }

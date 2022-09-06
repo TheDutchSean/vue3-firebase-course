@@ -1,12 +1,14 @@
 <template>
-  <div>{{$options.name}}</div>
+  <loginform/>
 </template>
 
 <script>
+import loginform from "@/components/LoginForm.vue"
+
 export default {
     name: "Login",
     components: {
-    // HelloWorld,
+        loginform
     },
     data(){
         return{

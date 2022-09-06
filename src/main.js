@@ -55,6 +55,8 @@ function mountApp(){
     app.mount("#app");
 
     appMounted = true;
+
+    return;
 }
 
 
@@ -63,15 +65,18 @@ async function setFireBaseGlobal(collection){
     
     // declare global
     const globalKey = `$${collection}`;
-    app.config.globalProperties[globalKey] = [];
 
     // get fireBased data
-    const response = await FireBase.getData(db, collection)
+    const response = await FireBase.getData(db, collection);
 
-    // fill global var
-    for(let index in response.docs){
-        app.config.globalProperties[globalKey][index] = response.docs[index].data();
+    // check response data type
+    if(typeof(response) === "object"){
+        app.config.globalProperties[globalKey] = response;
     }
+    else{
+        app.config.globalProperties[globalKey] = [];
+        console.warn(response);
+    }    
 
     //mount app
     if(appMounted == false){
