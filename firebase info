@@ -1,2 +1,16 @@
+
+
+
 https://firebase.google.com/docs/firestore/quickstart
 https://firebase.google.com/docs/firestore/query-data/get-data
+
+Users
+https://firebase.google.com/docs/auth/web/manage-users
+https://firebase.google.com/docs/reference/js/firebase.User
+
+Login
+https://firebase.google.com/docs/auth/web/password-auth
+
+
+Errors
+https://firebase.google.com/docs/auth/admin/errors

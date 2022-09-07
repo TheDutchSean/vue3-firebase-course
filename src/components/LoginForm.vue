@@ -52,6 +52,7 @@
 
 <script>
 // https://firebase.google.com/docs/auth/web/password-auth
+
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 export default {
@@ -75,9 +76,10 @@ export default {
 
             const auth = getAuth();
             signInWithEmailAndPassword(auth, info.email, info.password)
-            .then(() => {
+            .then((userCredential) => {
                 // Signed in 
-                this.$router.push("meetings")
+                this.$store.commit("storeUserCredential", userCredential); 
+                this.$router.push("meetings");
                 // ...
             })
             .catch((error) => {

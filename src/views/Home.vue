@@ -35,8 +35,8 @@
 </template>
 
 <script>
-// @ is an alias to /src
-// import fireBase from "@/db.js";
+// https://firebase.google.com/docs/auth/web/manage-users
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
   name: "Home",
@@ -48,7 +48,21 @@ export default {
   components: {},
   computed:{},
   mounted() {
-    this.user = this.$users[0].name;
+    // this.user = this.$users[0].name;
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // User is signed in, see docs for a list of available properties
+            // https://firebase.google.com/docs/reference/js/firebase.User
+            this.user = user.email;
+            // ...
+        } else {
+            // User is signed out
+            this.$router.push("login");
+        }
+    });
+    // console.log(this.$store.getters.getUserCredential("USERCREDENTIALS"))
   // end mounted lifecycle
   },
   methods:{ }
