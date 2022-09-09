@@ -8,12 +8,17 @@
 <script>
 // imports
 import navigation from "@/components/Navigation"
+
+
 // requires
 
 export default {
   name: "App",
   components: {
     navigation
+  },
+  mounted(){
+
   }
 }
 

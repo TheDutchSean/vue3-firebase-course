@@ -15,7 +15,7 @@
                     v-if="error.code"
                     class="col-12 alert alert-danger px-3"
                   >
-                    {{ error.code }} {{error.message}}
+                    {{ error.code }}
                   </div>
                   <section class="col-sm-12 form-group">
                     <label
@@ -120,11 +120,17 @@ export default {
             // An error happened.
                 this.error.code = error;
             });
+   
+            // check password
+            const checkResult = this.$functions.pwCheck(this.passOne);
 
-            // create new user profile
-            if(this.passOne === this.passTwo){
-
-                
+            if(this.passOne !== this.passTwo){
+              this.error.code = "password does not match controle"; 
+              return;
+            }
+ 
+            if(checkResult.status){
+                // create new user profile
                 createUserWithEmailAndPassword(auth, this.email, this.passOne)
                     .then((userCredential) => {
                         // Signed in 
@@ -136,7 +142,10 @@ export default {
                         this.error.message = error.message;
                         // ..
                     });             
-
+              return;
+            }
+            else{
+              this.error.code = checkResult.message;
             }
 
         }

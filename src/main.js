@@ -38,6 +38,11 @@ import db from "@/db.js"
 //import fireBase scripts
 import FireBase from "@/scripts/firebase";
 
+
+// import functions scripts
+import functions from "@/scripts/functions"
+
+
 // create app
 const app = createApp(App);
 let appMounted = false;
@@ -50,6 +55,9 @@ function mountApp(){
 
     // app components
     app.component('font-awesome-icon', FontAwesomeIcon);
+
+    // app scripts
+    app.config.globalProperties.$functions = functions;
 
     // mount app
     app.mount("#app");
