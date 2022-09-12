@@ -1,14 +1,14 @@
 <template>
   <div id="app">
-    <navigation />
-    <router-view class="container" />
+    <navigation :user="user" @logout="logOut"/>
+    <router-view class="container" @logout="logOut"/>
   </div>
 </template>
 
 <script>
 // imports
 import navigation from "@/components/Navigation"
-
+import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 
 // requires
 
@@ -17,8 +17,48 @@ export default {
   components: {
     navigation
   },
-  mounted(){
+  data(){
+    return{
+      user: null,
+      error: {
+        code: null,
+        message: null
+      }
+    }
+  },
+  mounted() {
+    // this.user = this.$users[0].name;
+    const auth = getAuth();
 
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // User is signed in, see docs for a list of available properties
+            // https://firebase.google.com/docs/reference/js/firebase.User
+            this.user = user;
+            // ...
+        } else {
+            // User is signed out
+            // this.$router.push("login");
+        }
+    });
+    // console.log(this.$store.getters.getUserCredential("USERCREDENTIALS"))
+  // end mounted lifecycle
+  },
+  methods:{
+    logOut(){
+
+            const auth = getAuth();
+           
+            // sign out loged in user
+            signOut(auth).then(() => {
+            // Sign-out successful.
+                this.user = null;
+                this.$router.push("login");
+            }).catch((error) => {
+            // An error happened.
+                this.error.code = error;
+            });
+    }
   }
 }
 

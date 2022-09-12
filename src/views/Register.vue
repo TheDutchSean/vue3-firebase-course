@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { getAuth, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, updateProfile ,signOut } from "firebase/auth";
 
 export default {
     name: "Register",
@@ -121,6 +121,7 @@ export default {
                 this.error.code = error;
             });
    
+
             // check password
             const checkResult = this.$functions.pwCheck(this.passOne);
 
@@ -128,14 +129,27 @@ export default {
               this.error.code = "password does not match controle"; 
               return;
             }
- 
+
             if(checkResult.status){
+
                 // create new user profile
                 createUserWithEmailAndPassword(auth, this.email, this.passOne)
-                    .then((userCredential) => {
+                    .then(
+                      userCredentials => {
                         // Signed in 
-                        this.$store.commit("storeUserCredential", userCredential); 
-                        this.$router.push("meetings");
+                        // add user name to profile
+                        updateProfile(auth.currentUser, {
+                          // profile variables - name and photo
+                          displayName: this.displayName
+                        }).then(() => {
+                          // Profile updated!
+                          this.$store.commit("storeUserCredential", userCredentials), 
+                          this.$router.replace("meetings")
+                        }).catch((error) => {
+                          // An error occurred
+                          this.error.code = error.code;
+                          this.error.message = error.message;
+                        });
                     })
                     .catch((error) => {
                         this.error.code = error.code;

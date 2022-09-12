@@ -35,7 +35,7 @@ function pwCheck(password, parameters = {}, message = {}){
 
     // default parameters
     const minSize = 4;
-    const maxSize = 12;
+    const maxSize = 16;
     const checkCap = true;
     const checkLeter = true;
     const checkNum = true;
@@ -80,6 +80,7 @@ function pwCheck(password, parameters = {}, message = {}){
         parameters.symbols = symbol;
     }
 
+    
     // check input message
     if(message.minSize === undefined){
         message.minSize = msgMinSize;
@@ -143,10 +144,12 @@ function pwCheck(password, parameters = {}, message = {}){
     
     // check password size
     if(password.length < parameters.minSize){
-        return result.message = message.minSize;
+        result.message = message.minSize;
+        return result;
     }
     else if(password.length > parameters.maxSize){
-        return result.message = message.maxSize;
+        result.message = message.maxSize;
+        return result;
     }
 
     // function logic
