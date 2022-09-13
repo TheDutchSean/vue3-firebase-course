@@ -18,7 +18,6 @@
 export default {
   name: "navigation",
   props: ["user"]
-
 }
 </script>
 

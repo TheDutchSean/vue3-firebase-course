@@ -69,21 +69,27 @@ function mountApp(){
 
 
 // this function get data from firebase and makes a global var
-async function setFireBaseGlobal(collection){
+async function setFireBaseGlobal(collection, createGlobal = false, globalName = "db"){
     
-    // declare global
-    const globalKey = `$${collection}`;
+
 
     // get fireBased data
     const response = await FireBase.getData(db, collection);
 
-    // check response data type
-    if(typeof(response) === "object"){
-        app.config.globalProperties[globalKey] = response;
-    }
-    else{
-        app.config.globalProperties[globalKey] = [];
-        console.warn(response);
+    // create global var
+    if(createGlobal){
+
+        // declare global
+        const globalKey = `$${globalName}`;
+
+        // check response data type
+        if(typeof(response) === "object"){
+            app.config.globalProperties[globalKey] = response;
+        }
+        else{
+            app.config.globalProperties[globalKey] = [];
+            console.warn(response);
+        }    
     }    
 
     //mount app
@@ -95,5 +101,5 @@ async function setFireBaseGlobal(collection){
 }
 
 // app globals and mount
-setFireBaseGlobal("users");
+setFireBaseGlobal("users", true);
 

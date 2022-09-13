@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <navigation :user="user" @logout="logOut"/>
-    <router-view class="container" @logout="logOut"/>
+    <router-view class="container" @logout="logOut" @addMeeting="addMeeting"/>
   </div>
 </template>
 
@@ -9,6 +9,9 @@
 // imports
 import navigation from "@/components/Navigation"
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+import { doc, setDoc, /* collection, */ serverTimestamp } from "firebase/firestore"; 
+import db from "@/db.js"
+
 
 // requires
 
@@ -27,6 +30,7 @@ export default {
     }
   },
   mounted() {
+
     // this.user = this.$users[0].name;
     const auth = getAuth();
 
@@ -53,12 +57,38 @@ export default {
             signOut(auth).then(() => {
             // Sign-out successful.
                 this.user = null;
-                this.$router.push("login");
+                this.$router.push("home");
             }).catch((error) => {
             // An error happened.
                 this.error.code = error;
             });
+    // end logOut method
+    },
+    async addMeeting(payload){
+      
+console.log("run function")
+
+      // https://firebase.google.com/docs/firestore/manage-data/add-data
+      await setDoc(doc(db, "users", this.user.uid),
+      {
+        name: payload,
+        createdDate: serverTimestamp()
+      })
+      
+      
+      
+      // get db
+      // this.$db.collection("users").doc(this.user.uid)
+      // .collection("meetings")
+      // .add({
+      //   name: payload,
+      //   createdDate: firestore.FieldValue.serverTimestamp()
+      // })
+
+
+    // end addMeeting method
     }
+  // end methods
   }
 }
 

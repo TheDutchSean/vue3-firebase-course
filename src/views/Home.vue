@@ -3,7 +3,7 @@
     <div class="text-secondary text-center">
       <div class="text-center" v-if="user">
         Welcome back 
-        <span class="font-weight-bold text-info"> {{ user }}</span>,
+        <span class="font-weight-bold text-info"> {{ user.displayName }}</span>,
         <a href="#" role="button" class="text-primary" @mouseup="$emit('logout')" >logout</a>
       </div>
     </div>
@@ -62,7 +62,7 @@ export default {
         if (user) {
             // User is signed in, see docs for a list of available properties
             // https://firebase.google.com/docs/reference/js/firebase.User
-            this.user = user.displayName;
+            this.user = user;
             // ...
         } else {
             // User is signed out
