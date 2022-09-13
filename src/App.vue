@@ -3,13 +3,16 @@
     <navigation :user="user" @logout="logOut"/>
     <router-view class="container" @logout="logOut" @addMeeting="addMeeting"/>
   </div>
+  <!-- <button
+    @mouseup="getDoc()"
+  >get doc</button> -->
 </template>
 
 <script>
 // imports
 import navigation from "@/components/Navigation"
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc, /* collection, */ serverTimestamp } from "firebase/firestore"; 
+import { doc, setDoc, getDocs, collection, serverTimestamp } from "firebase/firestore"; 
 import db from "@/db.js"
 
 
@@ -65,28 +68,43 @@ export default {
     // end logOut method
     },
     async addMeeting(payload){
-      
-console.log("run function")
 
-      // https://firebase.google.com/docs/firestore/manage-data/add-data
-      await setDoc(doc(db, "users", this.user.uid),
-      {
-        name: payload,
-        createdDate: serverTimestamp()
+      // user id
+      const UID = this.user.uid;
+      
+      try{
+        // get user meetings docs
+        const meetings = await getDocs(collection(db, "users", UID, "meetings"));
+        const numberOfMeetings = meetings.docs.length + 1;
+
+        // try to write doc
+        try{
+          // https://firebase.google.com/docs/firestore/manage-data/add-data
+          await setDoc(doc(db, "users", UID, `meetings`, `meeting-${numberOfMeetings}`),
+          {
+            name: payload,
+            createdDate: serverTimestamp()
       })
-      
-      
-      
-      // get db
-      // this.$db.collection("users").doc(this.user.uid)
-      // .collection("meetings")
-      // .add({
-      //   name: payload,
-      //   createdDate: firestore.FieldValue.serverTimestamp()
-      // })
-
-
+        }
+        catch(e){
+          // to do error msg
+        }
+      }
+      catch(e){
+          // to do error msg
+      }
     // end addMeeting method
+    },
+    async getDoc(){
+        console.log("getting doc"); 
+        // = await getDocs(collection(db, dbCollection))
+
+      const data = doc(db, "users", this.user.uid);
+      console.log(data);
+
+      const colletions = await getDocs(collection(db, "users", this.user.uid, "meetings"));
+      console.log(colletions.docs.length)
+
     }
   // end methods
   }
