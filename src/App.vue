@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <navigation :user="user" @logout="logOut"/>
-    <router-view class="container" @logout="logOut" @addMeeting="addMeeting"/>
+    <router-view class="container" :user="user" :meetings="meetings" @logout="logOut" @addMeeting="addMeeting" />
   </div>
   <!-- <button
     @mouseup="getDoc()"
@@ -12,7 +12,7 @@
 // imports
 import navigation from "@/components/Navigation"
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc, getDocs, collection, serverTimestamp } from "firebase/firestore"; 
+import { doc, setDoc, getDocs, collection, serverTimestamp, onSnapshot } from "firebase/firestore"; 
 import db from "@/db.js"
 
 
@@ -29,7 +29,18 @@ export default {
       error: {
         code: null,
         message: null
-      }
+      },
+      meetings:[],
+      test:[
+        {
+          id:1,
+          name:"blalbal"
+        },
+                {
+          id:2,
+          name:"sdhghsfh"
+        }
+      ]
     }
   },
   mounted() {
@@ -39,13 +50,26 @@ export default {
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            // User is signed in, see docs for a list of available properties
-            // https://firebase.google.com/docs/reference/js/firebase.User
-            this.user = user;
-            // ...
+          // User is signed in, see docs for a list of available properties
+          // https://firebase.google.com/docs/reference/js/firebase.User
+          this.user = user;
+
+          // get user meetings docs
+          // https://firebase.google.com/docs/firestore/query-data/listen
+          onSnapshot(collection(db, "users", this.user.uid, `meetings`), (snapShot) => {
+            snapShot.forEach( doc => {
+              this.meetings.push({
+                id: doc.id,
+                name: doc.data().name
+              });
+            });
+          });
+
+          // ...
         } else {
             // User is signed out
             // this.$router.push("login");
+            this.meetings = null;
         }
     });
     // console.log(this.$store.getters.getUserCredential("USERCREDENTIALS"))
@@ -71,28 +95,40 @@ export default {
 
       // user id
       const UID = this.user.uid;
-      
-      try{
+      const autoID = true;
+      // try{
         // get user meetings docs
-        const meetings = await getDocs(collection(db, "users", UID, "meetings"));
-        const numberOfMeetings = meetings.docs.length + 1;
-
+        // const meetings = await getDocs(collection(db, "users", UID, "meetings"));
+        // const numberOfMeetings = meetings.docs.length + 1;
+        const date = new Date();
+         
         // try to write doc
         try{
           // https://firebase.google.com/docs/firestore/manage-data/add-data
-          await setDoc(doc(db, "users", UID, `meetings`, `meeting-${numberOfMeetings}`),
-          {
-            name: payload,
-            createdDate: serverTimestamp()
-      })
+          if(autoID){
+            // generate document with auto ID in colletion meetings
+            await setDoc(doc(collection(db, "users", UID, `meetings`)),
+            {
+              name: payload,
+              createdDate: serverTimestamp()
+            })
+          }
+          else{
+            // generate document with named ID in colletion meetings
+            await setDoc(doc(db, "users", UID, `meetings`, `${date.toLocaleString()}`),
+            {
+              name: payload,
+              createdDate: serverTimestamp()
+            })
+          }
         }
         catch(e){
           // to do error msg
         }
-      }
-      catch(e){
-          // to do error msg
-      }
+      // }
+      // catch(e){
+      //     // to do error msg
+      // }
     // end addMeeting method
     },
     async getDoc(){
