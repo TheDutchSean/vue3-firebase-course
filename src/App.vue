@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <navigation :user="user" @logout="logOut"/>
-    <router-view class="container" :user="user" :meetings="meetings" @logout="logOut" @addMeeting="addMeeting" />
+    <router-view class="container" :user="user" :meetings="meetings" :error="error" @logout="logOut" @addMeeting="addMeeting" @deleteMeeting="deleteMeeting" @checkIn="checkIn"/>
   </div>
   <!-- <button
     @mouseup="getDoc()"
@@ -12,7 +12,7 @@
 // imports
 import navigation from "@/components/Navigation"
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc, getDocs, collection, serverTimestamp, onSnapshot } from "firebase/firestore"; 
+import { doc, setDoc, getDocs, collection, serverTimestamp, onSnapshot, deleteDoc, updateDoc, arrayUnion } from "firebase/firestore"; 
 import db from "@/db.js"
 
 
@@ -57,11 +57,20 @@ export default {
           // get user meetings docs
           // https://firebase.google.com/docs/firestore/query-data/listen
           onSnapshot(collection(db, "users", this.user.uid, `meetings`), (snapShot) => {
-            snapShot.forEach( doc => {
-              this.meetings.push({
+            const snapData = [];
+            snapShot.forEach( doc => {      
+              snapData.push({
                 id: doc.id,
                 name: doc.data().name
               });
+            });
+            this.meetings = snapData.sort((a, b) => {
+               if (a.name.toLowerCase() < b.name.toLowerCase()){
+                return -1;
+               }
+               else{
+                return 1;
+               }
             });
           });
 
@@ -141,6 +150,34 @@ export default {
       const colletions = await getDocs(collection(db, "users", this.user.uid, "meetings"));
       console.log(colletions.docs.length)
 
+    },
+    async deleteMeeting(payload){
+      
+      // https://firebase.google.com/docs/firestore/manage-data/delete-data
+      try{
+        await deleteDoc(doc(db, "users", this.user.uid, "meetings", payload))
+      }
+      catch(e){
+        // to do on error
+        console.warn(e)
+      }
+    },
+    async checkIn(payload){     
+      try{
+        const date = new Date();
+        // https://firebase.google.com/docs/firestore/manage-data/add-data
+        await updateDoc(doc(db, "users", payload.userID, "meetings", payload.meetingID), {
+          attendees : arrayUnion({
+            displayName: payload.displayName,
+            email: payload.email,
+            joinDate: date.toLocaleString()
+          })
+        });
+        this.$router.push("/")
+      } 
+      catch(e){
+        this.error.code = "Sorry, no such meeting"
+      }
     }
   // end methods
   }

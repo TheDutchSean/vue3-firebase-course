@@ -3,7 +3,8 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Meetings from "../views/Meetings.vue";
 import Register from "../views/Register.vue";
-
+import CheckIn from "@/views/CheckIn.vue"
+import Attendees from "@/views/Attendees.vue"
 
 const routes = [
   {
@@ -25,6 +26,16 @@ const routes = [
     path: "/register",
     name: "Register",
     component: Register,
+  },
+  {
+    path: "/checkin/:userID/:meetingID",
+    name: "CheckIn",
+    component: CheckIn,
+  },
+  {
+    path: "/attendees/:userID/:meetingID",
+    name: "Attendees",
+    component: Attendees,
   },
 
   // https://router.vuejs.org/guide/migration/#removed-star-or-catch-all-routes

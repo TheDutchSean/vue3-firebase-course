@@ -59,6 +59,7 @@
                 <button
                   class="btn btn-sm btn-outline-secondary"
                   title="Delete Meeting"
+                  @mouseup="$emit('deleteMeeting', item.id)"
                 >
                   <font-awesome-icon icon="trash"></font-awesome-icon>
                 </button>
@@ -66,7 +67,7 @@
                 <router-link
                   class="btn btn-sm btn-outline-secondary"
                   title="Check In"
-                  to="/"
+                  :to="`/checkin/${user.uid}/${item.id}`"
                 >
                   <font-awesome-icon icon="link"></font-awesome-icon>
                 </router-link>
@@ -74,7 +75,7 @@
                 <router-link
                   class="btn btn-sm btn-outline-secondary"
                   title="Attendees"
-                  to="/"
+                  :to="`/attendees/${user.uid}/${item.id}`"
                 >
                   <font-awesome-icon icon="list-ul"></font-awesome-icon>
                 </router-link>
@@ -116,6 +117,7 @@ export default {
         this.meetingName = null;
         this.$refs.meetingName.focus();
     }
+  // end methods
   }
 }
 </script>
