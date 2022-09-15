@@ -162,7 +162,7 @@ export default {
         console.warn(e)
       }
     },
-    async checkIn(payload){     
+    async checkInOld(payload){     
       try{
         const date = new Date();
         // https://firebase.google.com/docs/firestore/manage-data/add-data
@@ -174,6 +174,21 @@ export default {
           })
         });
         this.$router.push("/")
+      } 
+      catch(e){
+        this.error.code = "Sorry, no such meeting"
+      }
+    },
+    async checkIn(payload){     
+      try{
+         // https://firebase.google.com/docs/firestore/manage-data/add-data
+          await setDoc(doc(collection(db, "users", payload.userID, `meetings`, payload.meetingID, "attendees")),
+          {
+            displayName: payload.displayName,
+            email: payload.email,
+            joinDate: serverTimestamp()
+          })
+        this.$router.push(`/attendees/${payload.userID}/${payload.meetingID}`)
       } 
       catch(e){
         this.error.code = "Sorry, no such meeting"

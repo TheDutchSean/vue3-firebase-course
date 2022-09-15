@@ -22,7 +22,7 @@
                 <div class="input-group-append">
                   <button
                     type="submit"
-                    class="btn btn-sm btn-info"
+                    class="btn btn-lg btn-primary"
                     id="buttonAdd"
                     @click.prevent="handleAdd"
                   >
@@ -36,21 +36,17 @@
       </div>
     </div>
     <div class="d-flex flex-row justify-content-center">
-      <div class="col-11 col-md-8 col-lg-6">
+      <div class="col-12 col-md-9 col-lg-7">
         <div class="card border-top-0 rounded-0">
           <div class="card-body py-2">
             <h4 class="card-title m-0 text-center">Your Meetings</h4>
           </div>
           <div class="list-group list-group-flush">
-            <!-- <div v-for="item in meetings" :key="item.id">
-              <p>{{item.name}}</p>
-            </div> -->
             <div
               class="list-group-item d-flex"
               v-for="item in meetings"
               :key="item.id"
             >
-  
               <section
                 class="btn-group align-self-center"
                 role="group"
