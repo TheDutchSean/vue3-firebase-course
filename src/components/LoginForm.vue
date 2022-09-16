@@ -80,7 +80,6 @@ export default {
                 // ...
             })
             .catch((error) => {
-              console.log(error)
                 if(error.code.includes("/")){
                   this.error.code = error.code.split("/")[1];
                 }

@@ -136,9 +136,8 @@ export default {
         this.error.code = "password length can not exceeded limit of 16"; 
         return;
       }
-      console.log(this.error)
+      
       if(this.error.code == ""){
-
         // create new user profile
         createUserWithEmailAndPassword(auth, this.email, this.passOne)
           .then(
