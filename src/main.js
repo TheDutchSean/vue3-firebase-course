@@ -33,10 +33,10 @@ library.add(fas, far, fab);
 
 
 //import firebase DB
-import db from "@/db.js"
+// import db from "@/db.js"
 
 //import fireBase scripts
-import FireBase from "@/scripts/firebase";
+// import FireBase from "@/scripts/firebase";
 
 
 // import functions scripts
@@ -45,61 +45,78 @@ import functions from "@/scripts/functions"
 
 // create app
 const app = createApp(App);
-let appMounted = false;
+// let appMounted = false;
+
+// app use 
+app.use(store).use(router);
+
+// app components
+app.component('font-awesome-icon', FontAwesomeIcon);
+
+// app scripts
+app.config.globalProperties.$functions = functions;
+
+// mount app
+app.mount("#app");
 
 
-function mountApp(){
-
-    // app use 
-    app.use(store).use(router);
-
-    // app components
-    app.component('font-awesome-icon', FontAwesomeIcon);
-
-    // app scripts
-    app.config.globalProperties.$functions = functions;
-
-    // mount app
-    app.mount("#app");
-
-    appMounted = true;
-
-    return;
-}
 
 
-// this function get data from firebase and makes a global var
-async function setFireBaseGlobal(collection, createGlobal = false, globalName = "db"){
+
+
+
+// function mountApp(){
+
+//     // app use 
+//     app.use(store).use(router);
+
+//     // app components
+//     app.component('font-awesome-icon', FontAwesomeIcon);
+
+//     // app scripts
+//     app.config.globalProperties.$functions = functions;
+
+//     // mount app
+//     app.mount("#app");
+
+//     appMounted = true;
+
+//     return;
+// }
+
+
+// // this function get data from firebase and makes a global var
+// async function setFireBaseGlobal(collection, createGlobal = false, globalName = "db"){
     
 
 
-    // get fireBased data
-    const response = await FireBase.getData(db, collection);
+//     // get fireBased data
+//     const response = await FireBase.getData(db, collection);
 
-    // create global var
-    if(createGlobal){
+//     // create global var
+//     if(createGlobal){
 
-        // declare global
-        const globalKey = `$${globalName}`;
+//         // declare global
+//         const globalKey = `$${globalName}`;
 
-        // check response data type
-        if(typeof(response) === "object"){
-            app.config.globalProperties[globalKey] = response;
-        }
-        else{
-            app.config.globalProperties[globalKey] = [];
-            console.warn(response);
-        }    
-    }    
+//         // check response data type
+//         if(typeof(response) === "object"){
+//             app.config.globalProperties[globalKey] = response;
+//         }
+//         else{
+//             app.config.globalProperties[globalKey] = [];
+//             console.warn(response);
+//         }    
+//     }    
 
-    //mount app
-    if(appMounted == false){
-        mountApp()
-    }
+//     //mount app
+//     if(appMounted == false){
+//         mountApp()
+//     }
  
-    return;
-}
+//     return;
+// }
 
-// app globals and mount
-setFireBaseGlobal("users", true);
+// // app globals and mount
+// setFireBaseGlobal("users", true);
 

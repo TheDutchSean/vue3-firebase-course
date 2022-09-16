@@ -3,10 +3,10 @@
     <div
     class="row justify-content-center"
     >
-      <div class="col-md-8">
+      <div class="col-md-8" >
         <h1 class="font-weight-light text-center">Attendees</h1>
 
-        <div class="card bg-light mb-4">
+        <div class="card bg-light mb-4" v-if="user !== null && user.uid == userID">
           <div class="card-body text-center">
             <div class="input-group input-group-lg">
               <input
@@ -14,17 +14,20 @@
                 placeholder="Search Attendees"
                 class="form-control"
                 v-model="searchQuery"
+                ref="searchQuery"
               />
               <div class="input-group-append">
                 <button
                   class="btn btn-lg btn-outline-info"
                   title="Pick a random attendee"
+                  @mouseup="chooseRandom"
                 >
                   <font-awesome-icon icon="random"></font-awesome-icon>
                 </button>
                 <button
                   class="btn btn-lg btn-outline-info"
                   title="Reset Search"
+                  @mouseup="resetQuery"
                 >
                   <font-awesome-icon icon="undo"></font-awesome-icon>
                 </button>
@@ -98,12 +101,15 @@ export default {
             return 1;
           }
       });
+      this.displayAttendees= this.attendees;
+    // end onSnapshot function
     });  
+  // end mounted lifecycle
   },
   computed:{
     filteredAttendees: function() {
       const dataFilter = attendees => attendees.name.toLowerCase().match(this.searchQuery.toLowerCase()) && true;
-      return this.attendees.filter(dataFilter);
+      return this.displayAttendees.filter(dataFilter);
     }
   },
   methods:{
@@ -117,6 +123,7 @@ export default {
           console.warn(e);
         }
       }
+    // end deleteAttendee methode
     },
     async toggleStar(attendeeID){
 
@@ -147,6 +154,18 @@ export default {
           console.warn(e)
         }
       }
+    // end toggelStar method
+    },
+    chooseRandom(){
+      const randomAttendee = Math.floor(Math.random() * this.attendees.length);
+      this.displayAttendees = [this.attendees[randomAttendee]];
+    // end chooseRandom method
+    },
+    resetQuery(){
+      this.displayAttendees = this.attendees; 
+      this.searchQuery="";
+      this.$refs.searchQuery.focus();
+    // end resetQuery
     }
   // end methods
   }
