@@ -3,20 +3,14 @@
     <navigation :user="user" @logout="logOut"/>
     <router-view class="container" :user="user" :meetings="meetings" :error="error" @logout="logOut" @addMeeting="addMeeting" @deleteMeeting="deleteMeeting" @checkIn="checkIn"/>
   </div>
-  <!-- <button
-    @mouseup="getDoc()"
-  >get doc</button> -->
 </template>
 
 <script>
 // imports
 import navigation from "@/components/Navigation"
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
-import { doc, setDoc, getDocs, collection, serverTimestamp, onSnapshot, deleteDoc, updateDoc, arrayUnion } from "firebase/firestore"; 
+import { doc, setDoc, collection, serverTimestamp, onSnapshot, deleteDoc } from "firebase/firestore"; 
 import db from "@/db.js"
-
-
-// requires
 
 export default {
   name: "App",
@@ -31,31 +25,17 @@ export default {
         message: null
       },
       meetings:[],
-      test:[
-        {
-          id:1,
-          name:"blalbal"
-        },
-                {
-          id:2,
-          name:"sdhghsfh"
-        }
-      ]
     }
   },
   mounted() {
 
-    // this.user = this.$users[0].name;
     const auth = getAuth();
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/firebase.User
           this.user = user;
 
           // get user meetings docs
-          // https://firebase.google.com/docs/firestore/query-data/listen
           onSnapshot(collection(db, "users", this.user.uid, `meetings`), (snapShot) => {
             const snapData = [];
             snapShot.forEach( doc => {      
@@ -73,15 +53,11 @@ export default {
                }
             });
           });
-
-          // ...
         } else {
             // User is signed out
-            // this.$router.push("login");
             this.meetings = null;
         }
     });
-    // console.log(this.$store.getters.getUserCredential("USERCREDENTIALS"))
   // end mounted lifecycle
   },
   methods:{
@@ -93,7 +69,7 @@ export default {
             signOut(auth).then(() => {
             // Sign-out successful.
                 this.user = null;
-                this.$router.push("home");
+                this.$router.push("/");
             }).catch((error) => {
             // An error happened.
                 this.error.code = error;
@@ -101,88 +77,34 @@ export default {
     // end logOut method
     },
     async addMeeting(payload){
-
-      // user id
-      const UID = this.user.uid;
-      const autoID = true;
-      // try{
-        // get user meetings docs
-        // const meetings = await getDocs(collection(db, "users", UID, "meetings"));
-        // const numberOfMeetings = meetings.docs.length + 1;
-        const date = new Date();
          
         // try to write doc
         try{
-          // https://firebase.google.com/docs/firestore/manage-data/add-data
-          if(autoID){
-            // generate document with auto ID in colletion meetings
-            await setDoc(doc(collection(db, "users", UID, `meetings`)),
-            {
-              name: payload,
-              createdDate: serverTimestamp()
-            })
-          }
-          else{
-            // generate document with named ID in colletion meetings
-            await setDoc(doc(db, "users", UID, `meetings`, `${date.toLocaleString()}`),
-            {
-              name: payload,
-              createdDate: serverTimestamp()
-            })
-          }
+          // generate document with auto ID in colletion meetings
+          await setDoc(doc(collection(db, "users", this.user.uid, `meetings`)),
+          {
+            name: payload,
+            createdDate: serverTimestamp()
+          })
         }
-        catch(e){
-          // to do error msg
+        catch(error){
+          this.error.code = error;
         }
-      // }
-      // catch(e){
-      //     // to do error msg
-      // }
-    // end addMeeting method
-    },
-    async getDoc(){
-        console.log("getting doc"); 
-        // = await getDocs(collection(db, dbCollection))
-
-      const data = doc(db, "users", this.user.uid);
-      console.log(data);
-
-      const colletions = await getDocs(collection(db, "users", this.user.uid, "meetings"));
-      console.log(colletions.docs.length)
-
+     // end addMeeting method
     },
     async deleteMeeting(payload){
-      
-      // https://firebase.google.com/docs/firestore/manage-data/delete-data
+
       try{
         await deleteDoc(doc(db, "users", this.user.uid, "meetings", payload))
       }
-      catch(e){
-        // to do on error
-        console.warn(e)
+      catch(error){
+        this.error.code = error;
       }
-    },
-    async checkInOld(payload){     
-      try{
-        const date = new Date();
-        // https://firebase.google.com/docs/firestore/manage-data/add-data
-        await updateDoc(doc(db, "users", payload.userID, "meetings", payload.meetingID), {
-          attendees : arrayUnion({
-            displayName: payload.displayName,
-            email: payload.email,
-            joinDate: date.toLocaleString()
-          })
-        });
-        this.$router.push("/")
-      } 
-      catch(e){
-        this.error.code = "Sorry, no such meeting"
-      }
+    // end deleteMeeting methode
     },
     async checkIn(payload){     
       try{
-         // https://firebase.google.com/docs/firestore/manage-data/add-data
-          await setDoc(doc(collection(db, "users", payload.userID, `meetings`, payload.meetingID, "attendees")),
+        await setDoc(doc(collection(db, "users", payload.userID, `meetings`, payload.meetingID, "attendees")),
           {
             displayName: payload.displayName,
             email: payload.email,
@@ -193,6 +115,7 @@ export default {
       catch(e){
         this.error.code = "Sorry, no such meeting"
       }
+    // end checkIn method
     }
   // end methods
   }

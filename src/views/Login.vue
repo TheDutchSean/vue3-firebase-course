@@ -10,11 +10,6 @@ export default {
     components: {
         loginform
     },
-    data(){
-        return{
-            // var
-        }
-    }
 }
 </script>
 

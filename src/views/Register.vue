@@ -92,79 +92,82 @@
 import { getAuth, createUserWithEmailAndPassword, updateProfile ,signOut } from "firebase/auth";
 
 export default {
-    name: "Register",
-    components: {
-    // HelloWorld,
-    },
-    data(){
-        return{
-            displayName:"",
-            email:"",
-            passOne:"",
-            passTwo:"",
-            error:{
-                code:"",
-                message:""
-            }
-        }
-    },
-    methods:{
-        register(){
+  name: "Register",
+  components: {
+  // HelloWorld,
+  },
+  data(){
+      return{
+          displayName:"",
+          email:"",
+          passOne:"",
+          passTwo:"",
+          error:{
+              code:"",
+              message:""
+          }
+      }
+  },
+  methods:{
+    register(){
 
-            const auth = getAuth();
-           
-            // sign out loged in user
-            signOut(auth).then(() => {
-            // Sign-out successful.
-            }).catch((error) => {
-            // An error happened.
-                this.error.code = error;
-            });
-   
+      const auth = getAuth();
+      
+      // sign out loged in user
+      signOut(auth).then(() => {
+      // Sign-out successful.
+      }).catch((error) => {
+      // An error happened.
+          this.error.code = error;
+      });
 
-            // check password
-            const checkResult = this.$functions.pwCheck(this.passOne);
+      // check password
+      if(this.passOne !== this.passTwo){
+        this.error.code = "password does not match controle"; 
+        return;
+      }
 
-            if(this.passOne !== this.passTwo){
-              this.error.code = "password does not match controle"; 
-              return;
-            }
+      if(this.passOne.length < 4 ){
+        this.error.code = "password length should atleast be 4"; 
+        return;
+      }
 
-            if(checkResult.status){
+      if(this.passOne.length > 16 ){
+        this.error.code = "password length should exceeded limit of 16"; 
+        return;
+      }
 
-                // create new user profile
-                createUserWithEmailAndPassword(auth, this.email, this.passOne)
-                    .then(
-                      userCredentials => {
-                        // Signed in 
-                        // add user name to profile
-                        updateProfile(auth.currentUser, {
-                          // profile variables - name and photo
-                          displayName: this.displayName
-                        }).then(() => {
-                          // Profile updated!
-                          this.$store.commit("storeUserCredential", userCredentials), 
-                          this.$router.replace("meetings")
-                        }).catch((error) => {
-                          // An error occurred
-                          this.error.code = error.code;
-                          this.error.message = error.message;
-                        });
-                    })
-                    .catch((error) => {
-                        this.error.code = error.code;
-                        this.error.message = error.message;
-                        // ..
-                    });             
-              return;
-            }
-            else{
-              this.error.code = checkResult.message;
-            }
+      if(this.error.code == ""){
 
-        }
-
+        // create new user profile
+        createUserWithEmailAndPassword(auth, this.email, this.passOne)
+          .then(
+            userCredentials => {
+              // Signed in 
+              // add user name to profile
+              updateProfile(auth.currentUser, {
+                // profile variables - name and photo
+                displayName: this.displayName
+              }).then(() => {
+                // Profile updated!
+                this.$store.commit("storeUserCredential", userCredentials), 
+                this.$router.replace("meetings")
+              }).catch((error) => {
+                // An error occurred
+                this.error.code = error.code;
+                this.error.message = error.message;
+              });
+          })
+          .catch((error) => {
+            this.error.code = error.code;
+            this.error.message = error.message;
+          });             
+        return;
+      }
+    // end register function
     }
+  // end methods
+  }
 }
 </script>
 

@@ -89,26 +89,17 @@
 </template>
 
 <script>
-// https://firebase.google.com/docs/auth/web/manage-users
-// import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 export default {
   name: "Meetings",
-  components: {
-  // HelloWorld,
-  },
   props: ["user", "meetings"],
   data(){
       return{
           meetingName : null
       }
   },
-  mounted() {
-
-  },
   methods:{
-    handleAdd(){
-        
+    handleAdd(){   
         this.$emit("addMeeting", this.meetingName);
         this.meetingName = null;
         this.$refs.meetingName.focus();

@@ -51,8 +51,6 @@
 </template>
 
 <script>
-// https://firebase.google.com/docs/auth/web/password-auth
-
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 export default {

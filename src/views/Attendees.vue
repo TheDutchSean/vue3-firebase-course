@@ -82,7 +82,6 @@ export default {
   mounted() {
 
     // get attendees array from meetings
-    // https://firebase.google.com/docs/firestore/query-data/listen
     onSnapshot(collection(db, "users", this.userID, `meetings`, this.meetingID, "attendees"), (snapShot) => {
       const snapData = [];
       snapShot.forEach( doc => {      
