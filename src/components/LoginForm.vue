@@ -74,19 +74,24 @@ export default {
 
             const auth = getAuth();
             signInWithEmailAndPassword(auth, info.email, info.password)
-            .then((userCredential) => {
+            .then(() => {
                 // Signed in 
-                this.$store.commit("storeUserCredential", userCredential); 
                 this.$router.push("meetings");
                 // ...
             })
             .catch((error) => {
-                this.error.code = error.code.split("/")[1];
+              console.log(error)
+                if(error.code.includes("/")){
+                  this.error.code = error.code.split("/")[1];
+                }
+                else{
+                  this.error.code = error.code;  
+                }
                 this.error.message = error.message;
             });
         
         }
-    // end methods
+    // end methods 
     }
 }
 

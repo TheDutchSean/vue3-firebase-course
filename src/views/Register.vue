@@ -133,16 +133,16 @@ export default {
       }
 
       if(this.passOne.length > 16 ){
-        this.error.code = "password length should exceeded limit of 16"; 
+        this.error.code = "password length can not exceeded limit of 16"; 
         return;
       }
-
+      console.log(this.error)
       if(this.error.code == ""){
 
         // create new user profile
         createUserWithEmailAndPassword(auth, this.email, this.passOne)
           .then(
-            userCredentials => {
+            () => {
               // Signed in 
               // add user name to profile
               updateProfile(auth.currentUser, {
@@ -150,7 +150,6 @@ export default {
                 displayName: this.displayName
               }).then(() => {
                 // Profile updated!
-                this.$store.commit("storeUserCredential", userCredentials), 
                 this.$router.replace("meetings")
               }).catch((error) => {
                 // An error occurred
